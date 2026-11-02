@@ -10,13 +10,14 @@ struct ApsaExtension: Decodable {
     let description: String
     let version: String
     let matches: [String]
+    var excludeMatches: [String]? = nil
     var scripts: [String]? = nil
     var styles: [String]? = nil
     var runAt: String? = nil
     var allFrames: Bool? = nil
     var folder = URL(fileURLWithPath: "/")
 
-    private enum CodingKeys: String, CodingKey { case format, id, name, description, version, matches, scripts, styles, runAt, allFrames }
+    private enum CodingKeys: String, CodingKey { case format, id, name, description, version, matches, excludeMatches, scripts, styles, runAt, allFrames }
 }
 
 enum ApsaExtensions {
@@ -68,7 +69,8 @@ enum ApsaExtensions {
         func json(_ value: Any) -> String {
             String(data: try! JSONSerialization.data(withJSONObject: value, options: [.fragmentsAllowed]), encoding: .utf8)!
         }
-        let guardLine = "if (!\(json(ext.matches.map(patternRegex))).some(source => new RegExp(source).test(location.href))) return;"
+        let test = "source => new RegExp(source).test(location.href)"
+        let guardLine = "if (!\(json(ext.matches.map(patternRegex))).some(\(test)) || \(json((ext.excludeMatches ?? []).map(patternRegex))).some(\(test))) return;"
         var scripts: [WKUserScript] = []
         let css = read(ext.styles)
         if !css.isEmpty {

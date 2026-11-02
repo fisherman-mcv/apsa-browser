@@ -11,6 +11,7 @@ styles it names. Extensions run only in Apsa Browser, through WebKit.
   "description": "One sentence shown in Settings.",
   "version": "1.0",
   "matches": ["*://*.example.com/*"],
+  "excludeMatches": ["*://*.example.com/admin/*"],
   "scripts": ["main.js"],
   "styles": ["style.css"],
   "runAt": "end",
@@ -24,6 +25,7 @@ styles it names. Extensions run only in Apsa Browser, through WebKit.
 - `matches` lists the pages the extension runs on: `<all_urls>`, or
   `scheme://host/path`. The scheme can be `*` (http or https), the host can start
   with `*.` to include subdomains, and `*` in the path matches anything.
+- `excludeMatches` (optional) lists pages to leave alone even when `matches` covers them.
 - `scripts` and `styles` are files inside the folder. Styles are added when the
   page starts loading. Scripts run when the document is ready (`"runAt": "end"`,
   the default) or before the page's own scripts (`"runAt": "start"`).

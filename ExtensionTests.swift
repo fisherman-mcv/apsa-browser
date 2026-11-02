@@ -7,7 +7,7 @@ import WebKit
         NSApplication.shared.setActivationPolicy(.prohibited)
         let folder = URL(fileURLWithPath: CommandLine.arguments[1])
         let all = ApsaExtensions.all(in: [folder])
-        precondition(all.count == 24, "every built-in extension loads")
+        precondition(all.count == 22, "every built-in extension loads")
         func matches(_ pattern: String, _ url: String) -> Bool {
             url.range(of: ApsaExtensions.patternRegex(pattern), options: .regularExpression) != nil
         }
@@ -20,7 +20,7 @@ import WebKit
         let temp = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
         try! FileManager.default.createDirectory(at: temp, withIntermediateDirectories: true)
         defer { try? FileManager.default.removeItem(at: temp) }
-        try! #"{"format":1,"id":"t","name":"T","description":"","version":"1","matches":["*://example.org/*"],"scripts":["a.js","../escape.js"],"styles":["a.css"]}"#.write(to: temp.appendingPathComponent("extension.json"), atomically: true, encoding: .utf8)
+        try! #"{"format":1,"id":"t","name":"T","description":"","version":"1","matches":["*://example.org/*"],"excludeMatches":["*://example.org/skip*"],"scripts":["a.js","../escape.js"],"styles":["a.css"]}"#.write(to: temp.appendingPathComponent("extension.json"), atomically: true, encoding: .utf8)
         try! "document.body.dataset.ext = typeof secret;".write(to: temp.appendingPathComponent("a.js"), atomically: true, encoding: .utf8)
         try! "p { color: rgb(1, 2, 3) }".write(to: temp.appendingPathComponent("a.css"), atomically: true, encoding: .utf8)
         var ext = try! JSONDecoder().decode(ApsaExtension.self, from: Data(contentsOf: temp.appendingPathComponent("extension.json")))
@@ -42,6 +42,7 @@ import WebKit
         }
         precondition(page("https://example.org/a") == "undefined|rgb(1, 2, 3)", page("https://example.org/a"))
         precondition(page("https://example.com/a") == "none|rgb(0, 0, 0)")
+        precondition(page("https://example.org/skip") == "none|rgb(0, 0, 0)", "excluded pages are left alone")
         print("Extensions: format, matching, injection, isolation and path safety OK")
     }
 }

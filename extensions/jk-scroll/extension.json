@@ -2,12 +2,20 @@
   "format": 1,
   "id": "app.apsa.jk-scroll",
   "name": "J and K Scrolling",
-  "description": "Press J to scroll down and K to scroll up, as in many readers.",
+  "description": "Press J to scroll down and K to scroll up. Off on YouTube, X, Gmail, Reddit and GitHub, where J and K already do something.",
   "version": "1.0",
   "matches": [
     "<all_urls>"
   ],
   "scripts": [
     "main.js"
+  ],
+  "excludeMatches": [
+    "*://*.youtube.com/*",
+    "*://x.com/*",
+    "*://twitter.com/*",
+    "*://mail.google.com/*",
+    "*://*.reddit.com/*",
+    "*://github.com/*"
   ]
 }
