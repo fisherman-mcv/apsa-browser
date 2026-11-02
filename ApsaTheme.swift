@@ -205,7 +205,7 @@ private final class SettingsCategoryRow: NSButton {
 }
 
 final class ApsaSettingsWindow: NSWindowController {
-    private enum Category { case general, privacy, themes }
+    private enum Category { case general, privacy, themes, extensions }
     private var category = Category.general
     private let actions: ApsaSettingsActions
     private var cards: [ThemeCard] = []
@@ -234,6 +234,9 @@ final class ApsaSettingsWindow: NSWindowController {
     private let proxyPortField = NSTextField()
     private let keepSitesField = NSTextField()
     private var themesPane: NSView?
+    private var extensionsPane: NSView?
+    private var extensionsRow: SettingsCategoryRow?
+    private var extensionSwitches: [(NSSwitch, String)] = []
     private var generalRow: SettingsCategoryRow?
     private var themesRow: SettingsCategoryRow?
 
@@ -253,7 +256,9 @@ final class ApsaSettingsWindow: NSWindowController {
         let privacy = SettingsCategoryRow(title: apsaText("Privacy"), symbol: "hand.raised", target: self, action: #selector(showPrivacy))
         let themes = SettingsCategoryRow(title: apsaText("Themes"), symbol: "paintpalette", target: self, action: #selector(showThemes))
         generalRow = general; themesRow = themes; privacyRow = privacy
-        let categories = NSStackView(views: [general, privacy, themes])
+        let extensions = SettingsCategoryRow(title: apsaText("Extensions"), symbol: "puzzlepiece.extension", target: self, action: #selector(showExtensions))
+        extensionsRow = extensions
+        let categories = NSStackView(views: [general, privacy, themes, extensions])
         categories.orientation = .vertical; categories.alignment = .leading; categories.spacing = 4
         categories.translatesAutoresizingMaskIntoConstraints = false
 
@@ -274,6 +279,7 @@ final class ApsaSettingsWindow: NSWindowController {
         ])
         generalPane = makeGeneralPane()
         themesPane = makeThemesPane()
+        extensionsPane = makeExtensionsPane()
         privacyPane = makePrivacyPane()
         show(.general)
         NotificationCenter.default.addObserver(self, selector: #selector(refresh), name: ApsaThemeStore.changed, object: nil)
@@ -374,7 +380,7 @@ final class ApsaSettingsWindow: NSWindowController {
     private func show(_ next: Category) {
         category = next
         paneHost.subviews.forEach { $0.removeFromSuperview() }
-        guard let pane = next == .general ? generalPane : next == .privacy ? privacyPane : themesPane else { return }
+        guard let pane = [Category.general: generalPane, .privacy: privacyPane, .themes: themesPane, .extensions: extensionsPane][next] ?? nil else { return }
         paneHost.addSubview(pane)
         NSLayoutConstraint.activate([
             pane.leadingAnchor.constraint(equalTo: paneHost.leadingAnchor, constant: 20),
@@ -389,6 +395,34 @@ final class ApsaSettingsWindow: NSWindowController {
 
     @objc private func showGeneral() { show(.general) }
     @objc private func showThemes() { show(.themes) }
+    @objc private func showExtensions() { show(.extensions) }
+
+    private func makeExtensionsPane() -> NSView {
+        let stack = pane(apsaText("Extensions"))
+        let note = NSTextField(wrappingLabelWithString: apsaText("Changes apply to tabs opened afterwards. Extensions don't run in private windows."))
+        note.textColor = .secondaryLabelColor
+        stack.addArrangedSubview(note)
+        for ext in ApsaExtensions.all() {
+            let control = NSSwitch()
+            control.target = self; control.action = #selector(changeExtension(_:))
+            control.setAccessibilityLabel(ext.name)
+            extensionSwitches.append((control, ext.id))
+            stack.addArrangedSubview(settingRow(ext.name, detail: ext.description, controls: [control]))
+        }
+        let folder = NSButton(title: apsaText("Show Extensions Folder"), target: self, action: #selector(showExtensionsFolder))
+        stack.addArrangedSubview(settingRow(apsaText("Your Extensions"), detail: apsaText("Put an extension folder here and reopen Settings. The format is described in EXTENSIONS.md."), controls: [folder]))
+        return stack
+    }
+    @objc private func changeExtension(_ sender: NSSwitch) {
+        guard let id = extensionSwitches.first(where: { $0.0 === sender })?.1 else { return }
+        var on = ApsaExtensions.enabled
+        if sender.state == .on { on.insert(id) } else { on.remove(id) }
+        ApsaExtensions.enabled = on
+    }
+    @objc private func showExtensionsFolder() {
+        try? FileManager.default.createDirectory(at: ApsaExtensions.userFolder, withIntermediateDirectories: true)
+        NSWorkspace.shared.open(ApsaExtensions.userFolder)
+    }
     @objc private func showPrivacy() { show(.privacy) }
     @objc private func chooseLevel(_ sender: NSSegmentedControl) {
         ApsaPrivacyStore.shared.choose([ApsaPrivacyLevel.standard, .strict, .maximum][sender.selectedSegment])
@@ -542,6 +576,9 @@ final class ApsaSettingsWindow: NSWindowController {
         if keepSitesField.currentEditor() == nil { keepSitesField.stringValue = privacy.keepDataSites.joined(separator: ", ") }
         generalRow?.apply(selected: category == .general, palette: palette)
         themesRow?.apply(selected: category == .themes, palette: palette)
+        extensionsRow?.apply(selected: category == .extensions, palette: palette)
+        let on = ApsaExtensions.enabled
+        for (control, id) in extensionSwitches { control.state = on.contains(id) ? .on : .off }
         for card in cards { card.needsDisplay = true; card.setAccessibilityValue(store.selected == card.theme ? apsaText("Selected") : "") }
         neon.color = NSColor(apsaHex: store.neonRGB)
         neonLabel.stringValue = String(format: "#%06X", store.neonRGB)

@@ -9,6 +9,7 @@ A small macOS browser on the system WebKit, in the spirit of Safari.
 - Tabs in a sidebar with folders, session restore, history, bookmarks
 - Passwords in the macOS keychain, filled after Touch ID
 - Themes, and an optional HTML interface you can restyle with `chrome.css`
+- Extensions in its own simple format, 12 built in (see `EXTENSIONS.md`)
 - English and Russian
 
 ## Build

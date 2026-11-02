@@ -1,0 +1,13 @@
+{
+  "format": 1,
+  "id": "app.apsa.youtube-no-shorts",
+  "name": "YouTube Without Shorts",
+  "description": "Hides Shorts shelves, the Shorts tab and Shorts in search results.",
+  "version": "1.0",
+  "matches": [
+    "*://*.youtube.com/*"
+  ],
+  "styles": [
+    "style.css"
+  ]
+}

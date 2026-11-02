@@ -18,6 +18,8 @@ rm -rf "$RESOURCES_DIR/reader/ReaderBlocks.mlmodelc"
 cp -R "$SCRIPT_DIR/reader/ReaderBlocks.mlmodelc" "$RESOURCES_DIR/reader/"
 mkdir -p "$RESOURCES_DIR/adblock"
 cp "$SCRIPT_DIR/adblock/rules.json.deflate" "$RESOURCES_DIR/adblock/"
+rm -rf "$RESOURCES_DIR/extensions"
+cp -R "$SCRIPT_DIR/extensions" "$RESOURCES_DIR/extensions"
 mkdir -p "$RESOURCES_DIR/chrome"
 cp "$SCRIPT_DIR/chrome/chrome.html" "$SCRIPT_DIR/chrome/chrome.css" "$SCRIPT_DIR/chrome/chrome.js" "$RESOURCES_DIR/chrome/"
 
@@ -25,6 +27,7 @@ xcrun swiftc \
   "$SCRIPT_DIR/ApsaBrowser.swift" \
   "$SCRIPT_DIR/ApsaTheme.swift" \
   "$SCRIPT_DIR/ApsaPopup.swift" \
+  "$SCRIPT_DIR/ApsaExtensions.swift" \
   "$SCRIPT_DIR/ApsaLocalization.swift" \
   "$SCRIPT_DIR/ApsaChrome.swift" \
   "$SCRIPT_DIR/ApsaFind.swift" \

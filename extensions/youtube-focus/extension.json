@@ -1,0 +1,13 @@
+{
+  "format": 1,
+  "id": "app.apsa.youtube-focus",
+  "name": "YouTube Focus",
+  "description": "Hides recommendations next to videos, end screen suggestions and comments.",
+  "version": "1.0",
+  "matches": [
+    "*://*.youtube.com/*"
+  ],
+  "styles": [
+    "style.css"
+  ]
+}

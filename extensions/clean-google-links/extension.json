@@ -1,0 +1,14 @@
+{
+  "format": 1,
+  "id": "app.apsa.clean-google-links",
+  "name": "Clean Google Links",
+  "description": "Makes Google search results link straight to the site instead of through a Google redirect.",
+  "version": "1.0",
+  "matches": [
+    "*://www.google.com/*",
+    "*://www.google.ru/*"
+  ],
+  "scripts": [
+    "main.js"
+  ]
+}

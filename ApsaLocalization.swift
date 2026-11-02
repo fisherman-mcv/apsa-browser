@@ -47,6 +47,11 @@ func apsaText(_ format: String, _ first: CVarArg, _ rest: CVarArg...) -> String 
 }
 
 private let russianStrings: [String: String] = [
+    "Extensions": "Расширения",
+    "Changes apply to tabs opened afterwards. Extensions don't run in private windows.": "Изменения действуют во вкладках, открытых после них. В приватных окнах расширения не работают.",
+    "Show Extensions Folder": "Показать папку расширений",
+    "Your Extensions": "Свои расширения",
+    "Put an extension folder here and reopen Settings. The format is described in EXTENSIONS.md.": "Положите сюда папку расширения и откройте настройки заново. Формат описан в EXTENSIONS.md.",
     "%@ can't be opened over a secure connection": "%@ не открывается по защищённому соединению",
     "%d of %d": "%d из %d",
     "A browser on the system WebKit. Bookmarks, history and your session stay on this Mac, and passwords are kept in the macOS keychain.": "Браузер на системном WebKit. Закладки, история и сессия хранятся только на этом Mac, пароли лежат в связке ключей macOS.",

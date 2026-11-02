@@ -1,0 +1,14 @@
+{
+  "format": 1,
+  "id": "app.apsa.hide-x-trends",
+  "name": "X Without Trends",
+  "description": "Hides the trends and who-to-follow side column on x.com.",
+  "version": "1.0",
+  "matches": [
+    "*://x.com/*",
+    "*://twitter.com/*"
+  ],
+  "styles": [
+    "style.css"
+  ]
+}

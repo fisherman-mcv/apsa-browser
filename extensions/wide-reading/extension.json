@@ -1,0 +1,13 @@
+{
+  "format": 1,
+  "id": "app.apsa.wide-reading",
+  "name": "Comfortable Wikipedia",
+  "description": "Wikipedia articles get a readable line width and a larger font.",
+  "version": "1.0",
+  "matches": [
+    "*://*.wikipedia.org/*"
+  ],
+  "styles": [
+    "style.css"
+  ]
+}

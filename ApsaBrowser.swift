@@ -2263,6 +2263,7 @@ private final class BrowserWindowController: NSWindowController, NSWindowDelegat
         configuration.preferences.isElementFullscreenEnabled = !ApsaFastFullscreen.isEnabled
         configuration.userContentController.add(fastFullscreenHandler, name: ApsaFastFullscreen.handlerName)
         installScripts(on: configuration.userContentController, for: currentURL)
+        if !isPrivate { ApsaExtensions.install(on: configuration.userContentController) }
         configuration.defaultWebpagePreferences.allowsContentJavaScript = true
         let view = WKWebView(frame: .zero, configuration: configuration)
         if #available(macOS 13.3, *) { view.isInspectable = true }

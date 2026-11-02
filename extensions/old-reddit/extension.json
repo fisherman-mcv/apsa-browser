@@ -1,0 +1,15 @@
+{
+  "format": 1,
+  "id": "app.apsa.old-reddit",
+  "name": "Old Reddit",
+  "description": "Opens reddit.com pages in the old, lighter design.",
+  "version": "1.0",
+  "matches": [
+    "*://www.reddit.com/*",
+    "*://reddit.com/*"
+  ],
+  "scripts": [
+    "main.js"
+  ],
+  "runAt": "start"
+}
