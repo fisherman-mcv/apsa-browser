@@ -1,0 +1,13 @@
+{
+  "format": 1,
+  "id": "app.apsa.hacker-news-readable",
+  "name": "Hacker News: Readable",
+  "description": "Larger text and comfortable line spacing on Hacker News.",
+  "version": "1.0",
+  "matches": [
+    "*://news.ycombinator.com/*"
+  ],
+  "styles": [
+    "style.css"
+  ]
+}

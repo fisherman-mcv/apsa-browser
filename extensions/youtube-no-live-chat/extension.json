@@ -1,0 +1,13 @@
+{
+  "format": 1,
+  "id": "app.apsa.youtube-no-live-chat",
+  "name": "YouTube: Hide Live Chat",
+  "description": "Hides the chat next to live streams and premieres.",
+  "version": "1.0",
+  "matches": [
+    "*://*.youtube.com/*"
+  ],
+  "styles": [
+    "style.css"
+  ]
+}

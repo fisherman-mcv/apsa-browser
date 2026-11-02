@@ -1,0 +1,13 @@
+{
+  "format": 1,
+  "id": "app.apsa.github-wide",
+  "name": "GitHub: Full Width",
+  "description": "Uses the full window width for code, pull requests and issues.",
+  "version": "1.0",
+  "matches": [
+    "*://github.com/*"
+  ],
+  "styles": [
+    "style.css"
+  ]
+}

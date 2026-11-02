@@ -1,0 +1,13 @@
+{
+  "format": 1,
+  "id": "app.apsa.youtube-big-captions",
+  "name": "YouTube: Larger Captions",
+  "description": "Makes subtitles larger and easier to read.",
+  "version": "1.0",
+  "matches": [
+    "*://*.youtube.com/*"
+  ],
+  "styles": [
+    "style.css"
+  ]
+}

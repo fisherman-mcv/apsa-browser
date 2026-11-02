@@ -1,0 +1,2 @@
+#sidebar, #hot-network-questions, .js-consent-banner, .s-banner, #left-sidebar { display: none !important; }
+#mainbar, #content { width: auto !important; max-width: none !important; }

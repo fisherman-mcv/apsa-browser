@@ -1,0 +1,13 @@
+{
+  "format": 1,
+  "id": "app.apsa.show-alt-text",
+  "name": "Show Image Descriptions",
+  "description": "Shows an image's description when you point at it, if the site wrote one.",
+  "version": "1.0",
+  "matches": [
+    "<all_urls>"
+  ],
+  "scripts": [
+    "main.js"
+  ]
+}

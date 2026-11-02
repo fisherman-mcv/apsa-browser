@@ -1,0 +1,13 @@
+{
+  "format": 1,
+  "id": "app.apsa.youtube-skip-button",
+  "name": "YouTube: Press Skip Ad",
+  "description": "Presses the Skip button as soon as YouTube shows it.",
+  "version": "1.0",
+  "matches": [
+    "*://*.youtube.com/*"
+  ],
+  "scripts": [
+    "main.js"
+  ]
+}

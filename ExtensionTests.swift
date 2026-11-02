@@ -7,7 +7,7 @@ import WebKit
         NSApplication.shared.setActivationPolicy(.prohibited)
         let folder = URL(fileURLWithPath: CommandLine.arguments[1])
         let all = ApsaExtensions.all(in: [folder])
-        precondition(all.count == 12, "every built-in extension loads")
+        precondition(all.count == 24, "every built-in extension loads")
         func matches(_ pattern: String, _ url: String) -> Bool {
             url.range(of: ApsaExtensions.patternRegex(pattern), options: .regularExpression) != nil
         }

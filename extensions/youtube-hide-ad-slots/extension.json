@@ -1,0 +1,13 @@
+{
+  "format": 1,
+  "id": "app.apsa.youtube-hide-ad-slots",
+  "name": "YouTube: Hide Ad Slots",
+  "description": "Hides ad cards in the feed, next to videos and over the player. Video ads themselves are not removed.",
+  "version": "1.0",
+  "matches": [
+    "*://*.youtube.com/*"
+  ],
+  "styles": [
+    "style.css"
+  ]
+}

@@ -1,0 +1,13 @@
+{
+  "format": 1,
+  "id": "app.apsa.jk-scroll",
+  "name": "J and K Scrolling",
+  "description": "Press J to scroll down and K to scroll up, as in many readers.",
+  "version": "1.0",
+  "matches": [
+    "<all_urls>"
+  ],
+  "scripts": [
+    "main.js"
+  ]
+}

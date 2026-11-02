@@ -1,0 +1,17 @@
+{
+  "format": 1,
+  "id": "app.apsa.stackoverflow-clean",
+  "name": "Stack Overflow: Clean",
+  "description": "Hides the sidebar, hot network questions and sign-up prompts so the answers take the space.",
+  "version": "1.0",
+  "matches": [
+    "*://stackoverflow.com/*",
+    "*://*.stackexchange.com/*",
+    "*://superuser.com/*",
+    "*://serverfault.com/*",
+    "*://askubuntu.com/*"
+  ],
+  "styles": [
+    "style.css"
+  ]
+}

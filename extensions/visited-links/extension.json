@@ -1,0 +1,13 @@
+{
+  "format": 1,
+  "id": "app.apsa.visited-links",
+  "name": "Mark Visited Links",
+  "description": "Shows links you have already opened in purple on every site.",
+  "version": "1.0",
+  "matches": [
+    "<all_urls>"
+  ],
+  "styles": [
+    "style.css"
+  ]
+}
