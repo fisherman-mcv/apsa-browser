@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'unsafe-inline'; img-src data:; font-src data:; base-uri 'none'; form-action 'none'">
+<title>Apsa Browser</title>
+<style id="symbols"></style>
+<style id="stylesheet"></style>
+</head>
+<body>
+<header class="toolbar">
+  <div class="controls">
+    <button class="icon i-sidebar" data-command="toggleSidebar" title="Show or Hide Tabs" aria-label="Show or Hide Tabs"></button>
+    <button class="icon i-back" data-command="back" data-state="back" title="Back" aria-label="Back"></button>
+    <button class="icon i-forward" data-command="forward" data-state="forward" title="Forward" aria-label="Forward"></button>
+    <button class="icon i-reload" data-command="reload" data-state="reload" title="Reload" aria-label="Reload"></button>
+    <button class="icon i-settings" data-command="settings" title="Settings" aria-label="Settings"></button>
+    <form class="address" autocomplete="off">
+      <input id="address" type="text" placeholder="Address or search" spellcheck="false" autocapitalize="off" autocorrect="off" aria-label="Address">
+      <span class="address-tools" id="addressTools">
+        <button class="icon i-translate" id="translate" type="button" data-command="toggleTranslation"></button>
+        <button class="icon i-shield" id="shield" type="button" data-command="toggleSiteBlocking"></button>
+        <button class="icon i-star" id="star" type="button" data-command="toggleBookmark"></button>
+        <button class="icon i-reader" id="reader" type="button" data-command="toggleReader"></button>
+      </span>
+      <button class="icon i-tools-open" id="addressToolsToggle" type="button" data-command="toggleAddressTools"></button>
+    </form>
+  </div>
+</header>
+<nav class="sidebar" aria-label="Bookmarks and Tabs">
+  <section class="bookmarks" id="bookmarks" hidden>
+    <div class="sidebar-head">
+      <span class="sidebar-title">Bookmarks</span>
+      <button class="icon i-section-open" id="bookmarksToggle" data-command="toggleBookmarksSection" title="Collapse or Expand Bookmarks" aria-label="Collapse or Expand Bookmarks"></button>
+    </div>
+    <div class="bookmark-list" id="bookmarkList"></div>
+  </section>
+  <div class="sidebar-head">
+    <span class="sidebar-title">Tabs</span>
+    <button class="icon i-new-tab" data-command="newTab" title="New Tab" aria-label="New Tab"></button>
+  </div>
+  <div class="tabs" id="tabs" role="radiogroup"></div>
+</nav>
+</body>
+</html>

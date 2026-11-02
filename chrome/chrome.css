@@ -1,0 +1,336 @@
+/*
+  Apsa Browser interface, WebView mode.
+
+  This file is applied on top of the built-in stylesheet as soon as it is saved,
+  so the browser's new elements keep working when your copy is older. Delete it
+  to get the default back. If it breaks the interface, turn WebView off in
+  Settings: the native interface does not read this file.
+
+  The browser sets these variables on :root:
+    colors    --background --surface --text --secondary --accent --warning --line
+              --glass-tint --capsule-tint
+    metrics   --titlebar-offset --chrome-inset
+    icons     --i-<name> and --i-<name>-size
+  and these attributes on <html>:
+    data-theme="nature|minimalist|fisherman|hacker|midnight|ocean|rose|graphite|sunset|gamer"
+    data-appearance="light|dark"
+
+  The native window keeps the blur, the toolbar and sidebar glass, the traffic
+  lights and the loading bar. They show through wherever this page is transparent.
+  The page itself covers only the toolbar and the sidebar.
+*/
+
+* { box-sizing: border-box; }
+
+html, body {
+  height: 100%;
+  margin: 0;
+  overflow: hidden;
+  background: transparent;
+  color: var(--text);
+  font: 500 13px/1.2 -apple-system, system-ui, sans-serif;
+  cursor: default;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+button {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: inherit;
+  font: inherit;
+}
+
+button:focus { outline: none; }
+button:focus-visible { outline: 2px solid var(--accent); outline-offset: -2px; border-radius: 6px; }
+
+.icon {
+  flex: none;
+  width: 24px;
+  height: 24px;
+  background-color: var(--accent);
+  -webkit-mask: var(--mask) calc(50% + var(--nudge, 0px)) center / var(--mask-size) no-repeat;
+  mask: var(--mask) calc(50% + var(--nudge, 0px)) center / var(--mask-size) no-repeat;
+}
+.icon:active { opacity: .6; }
+.icon:disabled { opacity: .5; }
+
+.i-sidebar { --mask: var(--i-sidebar); --mask-size: var(--i-sidebar-size); }
+.i-back { --mask: var(--i-back); --mask-size: var(--i-back-size); --nudge: .75px; }
+.i-forward { --mask: var(--i-forward); --mask-size: var(--i-forward-size); --nudge: .75px; }
+.i-reload { --mask: var(--i-reload); --mask-size: var(--i-reload-size); }
+.i-settings { --mask: var(--i-settings); --mask-size: var(--i-settings-size); }
+.i-reader { --mask: var(--i-reader); --mask-size: var(--i-reader-size); }
+.i-reader-on { --mask: var(--i-reader-on); --mask-size: var(--i-reader-on-size); }
+.i-new-tab { --mask: var(--i-new-tab); --mask-size: var(--i-new-tab-size); }
+.i-close { --mask: var(--i-close); --mask-size: var(--i-close-size); --nudge: .75px; }
+.i-tab-web { --mask: var(--i-tab-web); --mask-size: var(--i-tab-web-size); }
+.i-tab-home { --mask: var(--i-tab-home); --mask-size: var(--i-tab-home-size); }
+.i-tools-open { --mask: var(--i-tools-open); --mask-size: var(--i-tools-open-size); }
+.i-tools-close { --mask: var(--i-tools-close); --mask-size: var(--i-tools-close-size); }
+.i-translate { --mask: var(--i-translate); --mask-size: var(--i-translate-size); }
+.i-translate:not(.is-on) { opacity: .7; }
+.i-shield { --mask: var(--i-shield); --mask-size: var(--i-shield-size); }
+.i-shield-off { --mask: var(--i-shield-off); --mask-size: var(--i-shield-off-size); }
+.i-star { --mask: var(--i-star); --mask-size: var(--i-star-size); }
+.i-star-on { --mask: var(--i-star-on); --mask-size: var(--i-star-on-size); }
+.i-section-open { --mask: var(--i-section-open); --mask-size: var(--i-section-open-size); }
+.i-section-closed { --mask: var(--i-section-closed); --mask-size: var(--i-section-closed-size); }
+.i-bookmark-web { --mask: var(--i-bookmark-web); --mask-size: var(--i-bookmark-web-size); }
+
+/* Toolbar */
+
+/* Stands in for the system material behind the native address capsule. */
+:root { --capsule-material: rgba(255, 255, 255, .025); }
+:root[data-appearance="light"] { --capsule-material: rgba(0, 0, 0, .014); }
+
+.toolbar {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 64px;
+  padding: calc(var(--titlebar-offset) + var(--chrome-inset)) calc(var(--chrome-inset) + 1px) var(--chrome-inset) 78px;
+}
+
+.controls {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  height: 100%;
+}
+
+.address {
+  position: relative;
+  display: flex;
+  flex: 1;
+  align-items: center;
+  align-self: stretch;
+  min-width: 260px;
+  margin: 0;
+  padding: 0 4px 0 12.5px;
+  border: .5px solid var(--line);
+  border-radius: 12px;
+  background: linear-gradient(var(--capsule-material), var(--capsule-material)), var(--capsule-tint);
+  cursor: text;
+}
+
+#address {
+  flex: 1;
+  min-width: 0;
+  margin: 0 4px 0 0;
+  padding: 0;
+  border: 0;
+  outline: 0;
+  background: none;
+  color: var(--text);
+  caret-color: var(--accent);
+  font: 500 13.5px/1.2 -apple-system, system-ui, sans-serif;
+  -webkit-user-select: text;
+  user-select: text;
+}
+#address::placeholder { color: var(--secondary); opacity: .7; }
+#address::selection { background: color-mix(in srgb, var(--accent) 35%, transparent); }
+
+.address .icon { width: 24px; height: 24px; cursor: default; }
+.address-tools {
+  display: flex;
+  flex: none;
+  max-width: 96px;
+  overflow: hidden;
+  transition: max-width .16s ease-in-out, opacity .16s ease-in-out, visibility .16s;
+}
+/* Hidden, not just narrow: collapsed buttons cannot take keyboard focus or clicks. */
+.address-tools.is-collapsed { max-width: 0; opacity: 0; visibility: hidden; }
+
+:root[data-theme="gamer"] .address {
+  border-width: 1.5px;
+  box-shadow: 0 0 9px color-mix(in srgb, var(--accent) 60%, transparent);
+}
+
+.toolbar-hidden .toolbar { display: none; }
+
+/* Sidebar */
+
+.sidebar {
+  position: absolute;
+  top: 64px;
+  bottom: 0;
+  left: 0;
+  width: 238px;
+  display: flex;
+  flex-direction: column;
+  transition: opacity .24s ease-in-out;
+}
+.sidebar-hidden .sidebar { opacity: 0; pointer-events: none; }
+.toolbar-hidden .sidebar { top: var(--titlebar-offset); }
+
+.sidebar-head {
+  display: flex;
+  flex: none;
+  align-items: center;
+  justify-content: space-between;
+  height: 15px;
+  margin: 17px 10px 9px 15px;
+}
+.sidebar-title { color: var(--secondary); font-size: 12px; font-weight: 600; }
+
+.bookmarks { flex: none; }
+.bookmarks[hidden] { display: none; }
+.bookmark-list {
+  max-height: 240px;
+  padding: 0 8px;
+  overflow-y: auto;
+}
+.bookmark-list::-webkit-scrollbar { display: none; }
+.bookmarks.is-collapsed .bookmark-list { display: none; }
+.bookmarks.is-collapsed .sidebar-head { margin-bottom: 0; }
+
+.bookmark {
+  position: relative;
+  display: block;
+  width: 100%;
+  height: 30px;
+  margin-bottom: 2px;
+  border-radius: 8px;
+  text-align: left;
+}
+.bookmark:active { background: color-mix(in srgb, var(--accent) 14%, transparent); }
+.bookmark-icon, .bookmark-favicon {
+  position: absolute;
+  top: 7px;
+  left: 11px;
+  width: 16px;
+  height: 16px;
+}
+.bookmark-icon {
+  background-color: var(--secondary);
+  -webkit-mask: var(--mask) center / var(--mask-size) no-repeat;
+  mask: var(--mask) center / var(--mask-size) no-repeat;
+}
+.bookmark-favicon { object-fit: contain; }
+.bookmark-title {
+  position: absolute;
+  top: 7px;
+  left: 38px;
+  right: 8px;
+  overflow: hidden;
+  color: var(--text);
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 16px;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+.bookmark-folder {
+  height: 22px;
+  padding: 5px 11px 0;
+  overflow: hidden;
+  color: var(--secondary);
+  font-size: 11px;
+  font-weight: 600;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.tabs {
+  flex: 1;
+  min-height: 0;
+  padding: 4px 8px 16px;
+  overflow-y: auto;
+}
+.tabs::-webkit-scrollbar { display: none; }
+
+.tab {
+  position: relative;
+  height: 52px;
+  margin-bottom: 4px;
+  border-radius: 11px;
+}
+.tab.is-active { background: color-mix(in srgb, var(--accent) 14%, transparent); }
+
+.tab.is-nested { margin-left: 12px; }
+
+.tab-folder {
+  position: relative;
+  display: block;
+  width: 100%;
+  height: 28px;
+  margin-bottom: 4px;
+  border-radius: 8px;
+  text-align: left;
+}
+.tab-folder-chevron {
+  position: absolute;
+  top: 5px;
+  left: 8px;
+  width: 18px;
+  height: 18px;
+  background-color: var(--accent);
+  -webkit-mask: var(--mask) center / var(--mask-size) no-repeat;
+  mask: var(--mask) center / var(--mask-size) no-repeat;
+}
+.tab-folder-name {
+  position: absolute;
+  top: 6px;
+  left: 32px;
+  right: 34px;
+  overflow: hidden;
+  color: var(--text);
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 16px;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+.tab-folder-count {
+  position: absolute;
+  top: 6px;
+  right: 10px;
+  color: var(--secondary);
+  font-size: 11px;
+  line-height: 16px;
+}
+
+.tab-select { position: absolute; inset: 0; width: 100%; height: 100%; border-radius: 11px; }
+
+.tab-icon, .tab-favicon {
+  position: absolute;
+  top: 17px;
+  left: 11px;
+  width: 18px;
+  height: 18px;
+  pointer-events: none;
+}
+.tab-icon {
+  background-color: var(--secondary);
+  -webkit-mask: var(--mask) calc(50% + var(--nudge, 0px)) center / var(--mask-size) no-repeat;
+  mask: var(--mask) calc(50% + var(--nudge, 0px)) center / var(--mask-size) no-repeat;
+}
+.tab.is-active .tab-icon { background-color: var(--accent); }
+.tab-favicon { object-fit: contain; }
+[hidden] { display: none; }
+
+.tab-title, .tab-detail {
+  position: absolute;
+  left: 38px;
+  right: 35px;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  pointer-events: none;
+}
+.tab-title { top: 9px; color: var(--text); font-size: 13px; font-weight: 500; line-height: 16px; }
+.tab.is-active .tab-title { font-weight: 600; }
+.tab-detail { top: 25.5px; color: var(--secondary); font-size: 10.5px; font-weight: 400; line-height: 13px; }
+
+.tab-close {
+  position: absolute;
+  top: 15px;
+  right: 8px;
+  width: 22px;
+  height: 22px;
+  background-color: var(--secondary);
+}
