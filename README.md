@@ -10,6 +10,7 @@ A small macOS browser on the system WebKit, in the spirit of Safari.
 - Passwords in the macOS keychain, filled after Touch ID
 - Themes, and an optional HTML interface you can restyle with `chrome.css`
 - Extensions in its own simple format, 22 built in (see `EXTENSIONS.md`)
+- Opens `allod://` pages, a small text web of its own with no scripts or trackers
 - English and Russian
 
 ## Build

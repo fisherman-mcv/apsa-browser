@@ -14,11 +14,13 @@ private enum SurfaceKind: Equatable {
 private func surfaceKind(for url: URL) -> SurfaceKind? {
     switch url.scheme?.lowercased() {
     case "browser": return .internalPage
-    case "http", "https": return .web
+    case "http", "https", ApsaAllod.scheme: return .web
     case "file" where ["html", "htm", "xhtml"].contains(url.pathExtension.lowercased()): return .web
     default: return nil
     }
 }
+
+private let allodSchemeHandler = ApsaAllodSchemeHandler()
 
 private func normalizedURL(_ rawValue: String) -> URL? {
     let value = rawValue.trimmingCharacters(in: .whitespacesAndNewlines)
@@ -2254,6 +2256,7 @@ private final class BrowserWindowController: NSWindowController, NSWindowDelegat
         let dataStore = isPrivate ? privateDataStore : WKWebsiteDataStore.default()
         if #available(macOS 14.0, *) { dataStore.proxyConfigurations = ApsaPrivacy.proxyConfigurations(ApsaPrivacyStore.shared.settings) }
         configuration.websiteDataStore = dataStore
+        configuration.setURLSchemeHandler(allodSchemeHandler, forURLScheme: ApsaAllod.scheme)
         configuration.preferences.isFraudulentWebsiteWarningEnabled = ApsaPrivacyStore.shared.settings.fraudWarnings
         // Without this WKWebView's user agent has no Safari token, and sites
         // such as YouTube and Google treat it as an unknown, older browser.
@@ -2841,7 +2844,8 @@ struct ApsaBrowserMain {
                 ("browser://about", "browser://about", .internalPage),
                 ("example.com", "https://example.com", .web),
                 ("hello world", "https://duckduckgo.com/?q=hello%20world", .web),
-                ("/tmp/page.html", "file:///tmp/page.html", .web)
+                ("/tmp/page.html", "file:///tmp/page.html", .web),
+                ("allod://localhost/", "allod://localhost/", .web)
             ]
             for (input, expected, kind) in checks {
                 guard let url = normalizedURL(input), url.absoluteString == expected, surfaceKind(for: url) == kind else {

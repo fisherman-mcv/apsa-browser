@@ -28,6 +28,7 @@ xcrun swiftc \
   "$SCRIPT_DIR/ApsaTheme.swift" \
   "$SCRIPT_DIR/ApsaPopup.swift" \
   "$SCRIPT_DIR/ApsaExtensions.swift" \
+  "$SCRIPT_DIR/ApsaAllod.swift" \
   "$SCRIPT_DIR/ApsaLocalization.swift" \
   "$SCRIPT_DIR/ApsaChrome.swift" \
   "$SCRIPT_DIR/ApsaFind.swift" \

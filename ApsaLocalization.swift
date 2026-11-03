@@ -48,6 +48,10 @@ func apsaText(_ format: String, _ first: CVarArg, _ rest: CVarArg...) -> String 
 
 private let russianStrings: [String: String] = [
     "Extensions": "Расширения",
+    "The certificate for %@ has changed since your last visit.": "Сертификат %@ изменился с вашего прошлого визита.",
+    "The server sent a response this browser cannot read.": "Сервер прислал ответ, который браузер не может прочитать.",
+    "The page redirected too many times.": "Страница слишком много раз перенаправила.",
+    "Page not available": "Страница недоступна",
     "Changes apply to tabs opened afterwards. Extensions don't run in private windows.": "Изменения действуют во вкладках, открытых после них. В приватных окнах расширения не работают.",
     "Show Extensions Folder": "Показать папку расширений",
     "Your Extensions": "Свои расширения",
