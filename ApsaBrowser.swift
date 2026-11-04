@@ -825,7 +825,10 @@ private final class BrowserWindowController: NSWindowController, NSWindowDelegat
         )
         let toolbarTop = toolbar.topAnchor.constraint(equalTo: rootMaterial.topAnchor)
         toolbarTopConstraint = toolbarTop
-        fastFullscreenHandler.onRequest = { [weak self] in self?.toggleFastFullscreen(for: $0) }
+        fastFullscreenHandler.onRequest = { [weak self] view, isEscape in
+            guard let self, !isEscape || self.fastFullscreenView === view else { return }
+            self.toggleFastFullscreen(for: view)
+        }
         passwordAutofill.isActive = { [weak self] in $0 === self?.webView }
         passwordAutofill.onShowManager = { [weak self] in self?.showPasswords() }
         findBar.webView = { [weak self] in self?.readerPage == nil ? self?.webView : nil }
@@ -1446,15 +1449,14 @@ private final class BrowserWindowController: NSWindowController, NSWindowDelegat
         findBar.pageChanged()
     }
 
+    // Frames, not constraints: video full screen takes the web view out of the
+    // window and puts it back with only its frame and autoresizing mask, so
+    // constraints would be lost and the page would keep a stale size.
     private func pin(_ view: NSView) {
-        view.translatesAutoresizingMaskIntoConstraints = false
+        view.translatesAutoresizingMaskIntoConstraints = true
+        view.autoresizingMask = [.width, .height]
+        view.frame = contentContainer.bounds
         contentContainer.addSubview(view)
-        NSLayoutConstraint.activate([
-            view.topAnchor.constraint(equalTo: contentContainer.topAnchor),
-            view.leadingAnchor.constraint(equalTo: contentContainer.leadingAnchor),
-            view.trailingAnchor.constraint(equalTo: contentContainer.trailingAnchor),
-            view.bottomAnchor.constraint(equalTo: contentContainer.bottomAnchor)
-        ])
     }
 
     // Bring a tab back as it was left, or load it if it has nothing kept.
@@ -1623,6 +1625,15 @@ private final class BrowserWindowController: NSWindowController, NSWindowDelegat
         fullscreenFinished()
     }
     func windowDidFailToExitFullScreen(_ window: NSWindow) { fullscreenFinished() }
+
+    // MARK: Picture in picture
+
+    // Hands the page's own video to the system player window, so any site's
+    // video works without a player of our own.
+    func togglePictureInPicture() {
+        guard let webView, surfaceKind(for: currentURL) == .web else { return }
+        webView.evaluateJavaScript(ApsaPictureInPicture.toggleScript, in: nil, in: .defaultClient) { _ in }
+    }
 
     // MARK: Fast fullscreen for video
 
@@ -2275,14 +2286,7 @@ private final class BrowserWindowController: NSWindowController, NSWindowDelegat
         contentContainer.usesWebKitGestures = true
         view.navigationDelegate = self
         view.uiDelegate = self
-        view.translatesAutoresizingMaskIntoConstraints = false
-        contentContainer.addSubview(view)
-        NSLayoutConstraint.activate([
-            view.topAnchor.constraint(equalTo: contentContainer.topAnchor),
-            view.leadingAnchor.constraint(equalTo: contentContainer.leadingAnchor),
-            view.trailingAnchor.constraint(equalTo: contentContainer.trailingAnchor),
-            view.bottomAnchor.constraint(equalTo: contentContainer.bottomAnchor)
-        ])
+        pin(view)
         webView = view
         view.pageZoom = pageZoom
         observeWebView(view)
@@ -2329,6 +2333,10 @@ private final class BrowserWindowController: NSWindowController, NSWindowDelegat
                 if let title = view.title { self.updateActiveTab(title: title) }
             },
             view.observe(\.canGoBack, options: [.new]) { [weak self] _, _ in self?.updateNavigationButtons() },
+            view.observe(\.fullscreenState, options: [.new]) { [weak self] view, _ in
+                guard let self, view.fullscreenState == .notInFullscreen, view.superview === self.contentContainer else { return }
+                view.frame = self.contentContainer.bounds
+            },
             view.observe(\.canGoForward, options: [.new]) { [weak self] _, _ in self?.updateNavigationButtons() },
             view.observe(\.estimatedProgress, options: [.new]) { [weak self] view, _ in
                 self?.progress.doubleValue = view.estimatedProgress
@@ -2723,6 +2731,7 @@ private final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate
         add(view, "Show or Hide Tabs", #selector(toggleSidebar), "e")
         add(view, "Show or Hide Toolbar", #selector(toggleToolbar), "m", [.command, .shift])
         add(view, "Enter Full Screen", #selector(toggleFullscreen), "f", [.command, .control])
+        add(view, "Picture in Picture", #selector(togglePictureInPicture), "p", [.command, .control])
         add(view, "Browser Stats", #selector(showPerformanceStats))
         view.addItem(.separator())
         add(view, "Reload", #selector(reloadPage), "r")
@@ -2803,6 +2812,7 @@ private final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate
     @objc private func showHistory() { browser?.showHistory() }
     @objc private func toggleBookmark() { browser?.toggleBookmark() }
     @objc private func toggleFullscreen() { browser?.toggleFullscreen() }
+    @objc private func togglePictureInPicture() { browser?.togglePictureInPicture() }
     @objc private func showPerformanceStats() { browser?.showPerformanceStats() }
     @objc private func toggleSiteBlocking() { browser?.toggleSiteBlocking() }
     @objc private func toggleTranslation() { browser?.toggleTranslation() }

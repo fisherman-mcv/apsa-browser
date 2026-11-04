@@ -22,7 +22,7 @@ enum ApsaFastFullscreen {
       globalThis.__apsaFastFullscreenInstalled = true;
       let enabled = false;
       let observer = null;
-      const request = () => { try { webkit.messageHandlers.apsaFastFullscreen.postMessage({}); } catch (_) {} };
+      const request = (escape = false) => { try { webkit.messageHandlers.apsaFastFullscreen.postMessage({ escape }); } catch (_) {} };
       const install = () => {
         if (!enabled) return false;
         const controls = document.querySelector('.ytp-right-controls');
@@ -45,7 +45,7 @@ enum ApsaFastFullscreen {
         observer = new MutationObserver(() => { if (install()) stopObserver(); });
         observer.observe(document.documentElement, { childList: true, subtree: true });
       };
-      const onKeyDown = event => { if (enabled && event.key === 'Escape') request(); };
+      const onKeyDown = event => { if (enabled && event.key === 'Escape') request(true); };
       addEventListener('keydown', onKeyDown, true);
       globalThis.__apsaSetFastFullscreen = value => {
         enabled = value === true;
@@ -79,8 +79,33 @@ enum ApsaFastFullscreen {
 }
 
 final class ApsaFastFullscreenHandler: NSObject, WKScriptMessageHandler {
-    var onRequest: ((WKWebView) -> Void)?
+    var onRequest: ((WKWebView, Bool) -> Void)?
     func userContentController(_ controller: WKUserContentController, didReceive message: WKScriptMessage) {
-        if message.frameInfo.isMainFrame, let view = message.webView { onRequest?(view) }
+        let isEscape = (message.body as? [String: Any])?["escape"] as? Bool ?? false
+        if message.frameInfo.isMainFrame, let view = message.webView { onRequest?(view, isEscape) }
     }
+}
+
+enum ApsaPictureInPicture {
+    // Picks the video in full screen, else the largest playing one, else the
+    // largest; leaves full screen first so the system can take the video.
+    static let toggleScript = #"""
+    (() => {
+      const videos = [...document.querySelectorAll('video')];
+      const current = videos.find(v => v.webkitPresentationMode === 'picture-in-picture');
+      if (current) { current.webkitSetPresentationMode('inline'); return 'inline'; }
+      const area = v => v.clientWidth * v.clientHeight;
+      const full = document.fullscreenElement || document.webkitFullscreenElement;
+      const inFull = full ? [...full.querySelectorAll('video')].concat(full.tagName === 'VIDEO' ? [full] : []) : [];
+      const playing = videos.filter(v => !v.paused && v.readyState > 1);
+      const video = (inFull.length ? inFull : playing.length ? playing : videos).sort((a, b) => area(b) - area(a))[0];
+      if (!video?.webkitSupportsPresentationMode?.('picture-in-picture')) return 'none';
+      const enter = () => video.webkitSetPresentationMode('picture-in-picture');
+      if (full) {
+        document.addEventListener('fullscreenchange', enter, { once: true });
+        (document.exitFullscreen || document.webkitExitFullscreen).call(document);
+      } else enter();
+      return 'picture-in-picture';
+    })()
+    """#
 }
